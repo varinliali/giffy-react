@@ -1,93 +1,61 @@
 import Expo from "expo";
 import React from "react";
 import { Provider } from "react-redux";
-// import axios from "axios";
+
+import { TabNavigator, StackNavigator } from "react-navigation";
 
 import configureStore from "./store/configureStore";
 
-import App from "./containers/App";
-
-// import GifModal from './components/GifModal';
-// import SearchBar from "./components/SearchBar";
-// import { StyleSheet, Text, View, Dimensions } from "react-native";
-
-// import GifList from "./components/GifList";
-
-// const SCREEN_WIDTH = Dimensions.get("window");
+import Home from "./containers/Home";
+import Signup from "./containers/Signup";
+import LoginScreen from "./containers/Login";
+import Favorites from "./containers/Favorites";
 
 const store = configureStore();
 
 class Main extends React.Component {
   render() {
+    const MainNavigator = StackNavigator({
+      auth: {
+        screen: TabNavigator({
+          login: { screen: LoginScreen },
+          signup: { screen: Signup }
+        }, {
+          lazy: true,
+          tabBarPosition: 'bottom',
+          animationEnabled: true,
+          swipeEnabled: false,
+          tabBarOptions: {
+            activeTintColor: "#e91e63"
+          }
+        })
+      },
+      home: { screen: Home }
+    });
+
+    // const MainNavigator = TabNavigator(
+    //   {
+    //     login: { screen: LoginScreen },
+    //     signup: { screen: Signup },
+    //     home: { screen: Home }
+    //   },
+    //   {
+    //     lazy: true,
+    //     tabBarPosition: "bottom",
+    //     swipeEnabled: true,
+    //     animationEnabled: true,
+    //     tabBarOptions: {
+    //       activeTintColor: "#e91e63"
+    //     }
+    //   }
+    // );
+
     return (
       <Provider store={store}>
-        <App />
+        <MainNavigator />
       </Provider>
     );
   }
 }
 
 Expo.registerRootComponent(Main);
-
-/*class App extends React.Component {
-  state = {
-    gifs: [],
-    selectedGif: null,
-    modalIsOpen: false
-  };
-
-  openModal = (gif) => {
-    this.setState({
-      modalIsOpen: true,
-      selectedGif: gif
-    })
-  }
-
-  closeModal = () => {
-    this.setState({
-      modalIsOpen: false,
-      selectedGif: null
-    })
-  }
-
-  handleTermChange = async term => {
-    const url = `http://api.giphy.com/v1/gifs/search?q=${term.replace(/\s/g, '+')}&api_key=dc6zaTOxFJmzC`;
-
-    try {
-      let { data: { data } } = await axios.get(url);
-      this.setState({ gifs: data })
-    } catch (err) {
-      console.log('bisiler olii ' + err);
-    }
-  };
-
-  render() {
-    return (
-      <View style={styles.container}>
-        <SearchBar onTermChange={this.handleTermChange} dims={SCREEN_WIDTH} />
-        <GifList
-          onGifSelect={selectedGif => this.openModal(selectedGif)} 
-          gifs={this.state.gifs} 
-        />
-        <GifModal 
-          modalIsOpen={this.state.modalIsOpen}
-          selectedGif={this.state.selectedGif}
-          onRequestClose={() => this.closeModal()} 
-          dims={SCREEN_WIDTH}  
-        />
-      </View>
-    );
-  }
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor:'rgba(215, 219, 226, 0.12)',
-    paddingTop: 24,
-    paddingLeft: 5,
-    paddingRight: 5
-  }
-});*/
